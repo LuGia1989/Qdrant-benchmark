@@ -1,0 +1,13 @@
+services:
+    bench:
+      build: .
+      container_name: vdbbench
+      volumes:
+        - ./results:/bench/results
+        - ./config:/bench/config
+        - ./sweep_ef.py:/bench/sweep_ef.py
+        - ./plot_sweep.py:/bench/plot_sweep.py
+      environment:
+        - RESULTS_LOCAL_DIR=/bench/results
+      restart: unless-stopped
+

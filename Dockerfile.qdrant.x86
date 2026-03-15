@@ -1,0 +1,31 @@
+FROM rust:latest AS builder
+
+ARG QDRANT_VERSION=v1.17.0
+
+RUN apt-get update && apt-get install -y \
+    cmake g++ libunwind-dev clang protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 --branch ${QDRANT_VERSION} https://github.com/qdrant/qdrant.git /qdrant
+
+WORKDIR /qdrant
+
+# x86_64: standard 4KB pages, no jemalloc page override needed
+
+RUN ulimit -n 65536 && cargo build --release --bin qdrant -j $(nproc)
+
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /qdrant/target/release/qdrant /qdrant/qdrant
+COPY --from=builder /qdrant/config /qdrant/config
+COPY --from=builder /qdrant/tools/entrypoint.sh /qdrant/entrypoint.sh
+
+RUN chmod +x /qdrant/entrypoint.sh
+
+WORKDIR /qdrant
+
+EXPOSE 6333 6334
+
+CMD ["./entrypoint.sh"]
