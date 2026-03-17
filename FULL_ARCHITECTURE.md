@@ -15,7 +15,6 @@ A distributed benchmarking platform for measuring **Qdrant** (open-source vector
 
 ```
 qdrant-benchmark/
-├── .claude/
 │   └── settings.local.json            # Claude Code permission config
 │
 ├── bench-client/                       # ── VectorDBBench Client ──
