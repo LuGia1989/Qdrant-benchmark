@@ -1,0 +1,1 @@
+{"indexed_fields":{"description":{"type":"text","tokenizer":"word","lowercase":true}},"indexed_types":{"description":[{"index_type":"full_text_index","mutability":"mutable","storage_type":"gridstore"},{"index_type":"null_index","mutability":"mutable","storage_type":{"mmap":{"is_on_disk":false}}}]},"skip_rocksdb":true}

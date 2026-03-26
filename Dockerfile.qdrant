@@ -17,14 +17,14 @@ ENV JEMALLOC_SYS_WITH_LG_PAGE=16
 # SVE/SVE2 on Neoverse V1/V2, LSE atomics, and dot-product instructions).
 ENV RUSTFLAGS="-C target-cpu=native"
 
-RUN ulimit -n 65536 && cargo build --release --bin qdrant -j $(nproc)
+RUN ulimit -n 65536 && cargo build --release --bin qdrant --features rocksdb -j $(nproc)
 
 # Download the pre-built Web UI (dashboard) static files
 ADD https://github.com/qdrant/qdrant-web-ui/releases/download/v0.2.7/dist-qdrant.zip /tmp/dist-qdrant.zip
 RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/* \
     && unzip /tmp/dist-qdrant.zip -d /tmp/dist-qdrant && mv /tmp/dist-qdrant/dist /qdrant/static && rm -rf /tmp/dist-qdrant /tmp/dist-qdrant.zip
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
