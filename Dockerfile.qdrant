@@ -19,6 +19,11 @@ ENV RUSTFLAGS="-C target-cpu=native"
 
 RUN ulimit -n 65536 && cargo build --release --bin qdrant -j $(nproc)
 
+# Download the pre-built Web UI (dashboard) static files
+ADD https://github.com/qdrant/qdrant-web-ui/releases/download/v0.2.7/dist-qdrant.zip /tmp/dist-qdrant.zip
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/* \
+    && unzip /tmp/dist-qdrant.zip -d /tmp/dist-qdrant && mv /tmp/dist-qdrant/dist /qdrant/static && rm -rf /tmp/dist-qdrant /tmp/dist-qdrant.zip
+
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
@@ -26,6 +31,7 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 COPY --from=builder /qdrant/target/release/qdrant /qdrant/qdrant
 COPY --from=builder /qdrant/config /qdrant/config
 COPY --from=builder /qdrant/tools/entrypoint.sh /qdrant/entrypoint.sh
+COPY --from=builder /qdrant/static /qdrant/static
 
 RUN chmod +x /qdrant/entrypoint.sh
 

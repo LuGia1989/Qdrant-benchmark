@@ -209,7 +209,7 @@ class QdrantLocal(VectorDB):
                     wait=True,
                     points=Batch(ids=ids, payloads=payloads, vectors=vectors),
                 )
-                insert_count += QDRANT_BATCH_SIZE
+                insert_count += len(vectors)
             # enable indexing after insertion
             self.client.update_collection(
                 collection_name=self.collection_name,

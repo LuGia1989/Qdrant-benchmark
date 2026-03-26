@@ -5,6 +5,9 @@ services:
       ports:
         - "6333:6333"
         - "6334:6334"
+      environment:
+        - RUN_MODE=production
+        - QDRANT__SERVICE__ENABLE_STATIC_CONTENT=true
       volumes:
         - ./qdrant_storage:/qdrant/storage
       deploy:
